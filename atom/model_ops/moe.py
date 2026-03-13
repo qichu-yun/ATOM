@@ -50,6 +50,7 @@ from atom.model_ops.utils import (
 from atom.utils import envs
 from atom.utils.custom_register import direct_register_custom_op
 from atom.utils.forward_context import get_forward_context
+from atom.utils.decorators import mark_trace
 from torch import nn
 from transformers import PretrainedConfig
 from atom.plugin.moe import FusedMoEDecoratorForPluginMode
@@ -449,6 +450,7 @@ class UnquantizedFusedMoEMethod(FusedMoEMethodBase):
     ) -> FusedMoEQuantConfig | None:
         return FUSED_MOE_UNQUANTIZED_CONFIG
 
+    @mark_trace(prefix="unquantized_moe", torch_compile=False)
     def apply(
         self,
         layer: torch.nn.Module,
@@ -859,6 +861,7 @@ class Mxfp4MoEMethod(FusedMoEMethodBase):
             w2_scale=layer.w2_weight_scale,
         )
 
+    @mark_trace(prefix="mxfp4_moe", torch_compile=False)
     def apply(
         self,
         layer: torch.nn.Module,
@@ -1334,6 +1337,7 @@ class CompressedTensorsFp8MoEMethod(FusedMoEMethodBase):
             block_shape=block_shape,
         )
 
+    @mark_trace(prefix="compressed_fp8_moe", torch_compile=False)
     def apply(
         self,
         layer: torch.nn.Module,
@@ -1698,6 +1702,7 @@ class Fp8MoEMethod(FusedMoEMethodBase):
                 block_shape=None,
             )
 
+    @mark_trace(prefix="fp8_moe", torch_compile=False)
     def apply(
         self,
         layer: torch.nn.Module,
